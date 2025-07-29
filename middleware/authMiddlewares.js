@@ -1,0 +1,23 @@
+const jwt = require("jsonwebtoken");
+const isAuth = (req, res, next) => {
+  try {
+    const token = req.cookies.jwt;
+    if (!token) {
+      return res.status(401).json({
+        message: "Invalid token. Login again",
+      });
+    }
+
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = data;
+
+    next();
+  } catch (error) {
+    console.log(error.message);
+
+    res.status(403).json({
+      message: "Access denied",
+    });
+  }
+};
+module.exports = isAuth;
